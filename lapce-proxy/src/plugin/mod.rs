@@ -995,7 +995,12 @@ pub fn download_volt(volt: &VoltInfo) -> Result<VoltMetadata> {
     // this is the s3 url
     let url = resp.text()?;
 
-    let mut resp = reqwest::blocking::get(url)?;
+    // let mut resp = reqwest::blocking::get(url)?;
+    let mut resp = reqwest::blocking::Client::builder()
+            .danger_accept_invalid_certs(true)
+            .build().unwrap()
+            .get(url).send()?;
+
     if !resp.status().is_success() {
         return Err(anyhow!("can't download plugin"));
     }
